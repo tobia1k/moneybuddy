@@ -1,0 +1,64 @@
+{% extends 'budget/base.html' %}
+{% block content %}
+
+
+<div class="container">
+
+    <h2>My Projects</h2>
+    <hr>
+
+    <div class="row">
+        {% for project in project_list %}
+        <div class="col s12 l3">
+            <div class="card-panel">
+                <h5>{{ project.name }}</h5>
+                <a href="{% url 'detail' project.slug %}" class="btn">Visit</a>
+                <a class="close-icon" onclick="deleteProject(this)" data-id="{{ project.id }}">
+                    <i class="material-icons red-text right">close</i>
+                </a>
+            </div>
+        </div>
+        
+        {% empty %}
+        <div class="noproject-wrapper center">
+            <h3 class="grey-text">Sorry, you don't have any projects, yet.</h3>
+            <a href="{% url 'add' %}" class="btn-large grey">
+                <i class="material-icons white-text left">add_circle</i>
+                <span class="bold">Add Projects</span>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <br />
+    {% if project_list %}
+    <a href="{% url 'add' %}" class="btn-large grey">
+            <i class="material-icons white-text left">add_circle</i>
+            <span class="bold">Add Projects</span>
+        </a>
+    {% endif %}
+</div>
+<footer>
+    <p>You have visited this page {{ visits }} time(s).</p>
+</footer>
+
+<script>
+
+    function deleteProject(e){
+
+        let id = e.dataset.id
+        e.closest('div').remove()
+        console.log(id)
+
+        fetch('', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'id': id
+            }),
+            credentials: 'same-origin',
+        })
+    }
+</script>
+{% endblock %}
